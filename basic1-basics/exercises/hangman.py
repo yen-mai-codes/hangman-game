@@ -79,7 +79,7 @@ def get_guessed_word(secret_word, letters_guessed):
         which letters in secret_word have been guessed so far.
     """
     res = ""
-    guess_set = set([i for i in letters_guessed])
+    guess_set = set(letters_guessed)
 
     for char in secret_word:
         if char in guess_set:
@@ -96,7 +96,7 @@ def get_available_letters(letters_guessed):
     returns: string (of letters), comprised of letters that represents which letters have not yet been guessed.
     """
     all_letters = list(string.ascii_lowercase)
-    guess_set = set([i for i in letters_guessed])
+    guess_set = set(letters_guessed)
 
     for char in guess_set:
         index = ord(char) - 97
@@ -154,7 +154,6 @@ def hangman(secret_word):
     """
     print("Welcome to the game Hangman!")
     print("I am thinking of a word that is %d letters long" % len(secret_word))
-    # print("..The secret word is: ", secret_word)
 
     # initialize warnings, score, guess count, available letters and letters guessed
     score = 0
@@ -185,14 +184,15 @@ def hangman(secret_word):
                 print("Oops! You've already guessed that letter.")
 
             # if still have more warnings
-            if warning_count != 0:
+            if warning_count > 0:
                 print(
                     "You have %d warnings left: %s" % (warning_count, resulting_guess)
                 )
 
             # if no more warnings
-            else:
+            elif warning_count == 0:
                 guess_count -= 1
+                warning_count = 3
                 print(
                     "You have no warnings left so you lose one guess: %s"
                     % resulting_guess
@@ -227,11 +227,11 @@ def hangman(secret_word):
                 print("Your total score for this game is:", score)
                 break
 
-            elif guess_count == 0:
-                print("Sorry, you ran out of guesses. The word was", secret_word)
-
         # update avail letters
-        avail_letters = get_available_letters(letters_guessed)
+        if guess_validity == 0 or guess_validity == 2:
+            avail_letters = get_available_letters(letters_guessed)
+
+    print("Sorry, you ran out of guesses. The word was", secret_word)
 
 
 # When you've completed your hangman function, scroll down to the bottom
@@ -319,7 +319,6 @@ def hangman_with_hints(secret_word):
     """
     print("Welcome to the game Hangman!")
     print("I am thinking of a word that is %d letters long" % len(secret_word))
-    # print("..The secret word is: ", secret_word)
 
     # initialize warnings, score, guess count, available letters and letters guessed
     score = 0
@@ -335,7 +334,6 @@ def hangman_with_hints(secret_word):
         print("You have %d guesses left." % guess_count)
         print("Available letters: ", avail_letters)
         guess = input("Please guess a letter: ").lower()
-        letters_guessed.append(guess)
         guess_validity = check_valid_guess(guess, avail_letters)
         # if guess == *: display hint
 
@@ -361,7 +359,7 @@ def hangman_with_hints(secret_word):
                 print("Oops! You've already guessed that letter.")
 
             # if still have more warnings
-            if warning_count != 0:
+            if warning_count > 0:
                 print(
                     "You have %d warnings left: %s" % (warning_count, resulting_guess)
                 )
@@ -369,6 +367,7 @@ def hangman_with_hints(secret_word):
             # if no more warnings
             else:
                 guess_count -= 1
+                warning_count = 3
                 print(
                     "You have no warnings left so you lose one guess: %s"
                     % resulting_guess
@@ -376,6 +375,7 @@ def hangman_with_hints(secret_word):
 
         # if valid guess
         else:
+            letters_guessed.append(guess)
             secret_set = set(secret_word)
 
             # the '_ _' format after the guess
@@ -403,11 +403,11 @@ def hangman_with_hints(secret_word):
                 print("Your total score for this game is:", score)
                 break
 
-            elif guess_count == 0:
-                print("Sorry, you ran out of guesses. The word was", secret_word)
-
         # update avail letters
-        avail_letters = get_available_letters(letters_guessed)
+        if guess_validity == 0 or guess_validity == 2:
+            avail_letters = get_available_letters(letters_guessed)
+
+    print("Sorry, you ran out of guesses. The word was", secret_word)
 
 
 # When you've completed your hangman_with_hint function, comment the two similar
