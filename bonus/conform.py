@@ -17,6 +17,8 @@ def pleaseConform(caps):
 
     goal: minimize the number of commands you have to shout out
     """
+    # ----------------# Observation & Algorithm #----------------
+
     # * observation: number of commands for flipping a type of cap is simply
     # the number of separate blocks of that type of cap. a block is defined
     # as consecutive caps of same type.
@@ -27,40 +29,52 @@ def pleaseConform(caps):
     # and then take the minimum between them.
 
     # * implementation:
-    # * initialize 2 arrays for 2 types of blocks: block F and block B
+    # * initialize 2 arrays for 2 types of block groups: F_blocks and B_blocks
     # * initialize current block with caps[0] as the first element
-    # * loop through caps. if current cap is different from current block[0],
-    # then push current block onto corresponding block(F or B). then initialize
-    # new current block with current block[0] = current cap
-    # * after done looping through caps, find the block with min length. loop
-    # through min block and print('people in positions...')
+    # * initialize current block's representative cap as caps[0]
+    # * loop through caps. if current cap is different from current block's
+    # representative, then push current block onto corresponding block(F or B).
+    # (if the current block has H's indices, just ignore this block)
+    # then initialize new current block with current block's rep = current cap
+    # and current block[0] = current index
+    # * after done looping through caps, find the block group with min length (F/B).
+    # loop through min block and print('people in positions...')
     # * finished.
 
-    # F/B_blocks: 2D array (blocks)
+    # ----------------#---------------------#----------------
+    # ----------------# Code implementation #----------------
+
+    # edge case: if the line is empty
+    if len(caps) == 0:
+        print("This line is empty! No need to flip caps.")
+        return
+
+    # init F/B_blocks: 2D array (blocks)
     F_blocks = []
     B_blocks = []
-    # cur_block: 1D array consisting of indices
+    # init cur_block: 1D array consisting of indices
     cur_block = [0]
-    cur_block_cap = caps[0]
+    # init cur_block's representative cap: 1D array consisting of indices
+    cur_block_rep = caps[0]
 
     for i in range(len(caps)):
         cap = caps[i]
 
         # if current cap is different from current block
-        if cap != cur_block_cap:
+        if cap != cur_block_rep:
             # push current block onto corresponding blocks
-            # if the current block has indicies of people with 'H',
+            # if the current block has indices of people with 'H',
             # then don't push anywhere (basically, ignore 'H' blocks)
 
-            if cur_block_cap == "B":
+            if cur_block_rep == "B":
                 B_blocks.append(cur_block)
-            elif cur_block_cap == "F":
+            elif cur_block_rep == "F":
                 F_blocks.append(cur_block)
 
             # create new current block with current index
             cur_block = [i]
             # update current block's representative cap
-            cur_block_cap = caps[i]
+            cur_block_rep = caps[i]
 
         # if current cap belongs to current block
         else:
@@ -82,6 +96,9 @@ def pleaseConform(caps):
                 "People in position %d through %d flip your caps!"
                 % (block[0], block[-1])
             )
+
+    return
+    # ----------------#---------------------#----------------
 
 
 pleaseConform(caps)
